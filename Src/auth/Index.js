@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config");
 const error = require("../middlewares/error");
+const { default: ModelManager } = require("sequelize/lib/model-manager");
 
 const secret = config.jwt.secret;
 
@@ -26,9 +27,22 @@ const checkToken = {
 function getToken(authorization) {
     if (!authorization) {
         throw new Error("No authorization header provided");
-    }if(authorization.IndexOf('Bearer') === -1){
+    }
+    if (authorization.indexOf('Bearer') === -1) {
         throw new Error("Invalid format");
     }
-    let token = authorization.replace("Bearer ","");
+    let token = authorization.replace("Bearer ", "");
     return token;
 };
+function decodeHeader(req) {
+    const authorization = req.headers.authorization || "";
+    const token = getToken(authorization);
+    const decode = verifyToken(token);
+    req.user = decode;
+    return decode;
+};
+
+ModelManager.exports = {
+    assignToken,
+    checkToken,
+}

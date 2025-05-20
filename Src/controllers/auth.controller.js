@@ -52,3 +52,7 @@ const create = async (req, res, next) => {
         next(error);
     }
 }
+module.exports = {
+    login,
+    create,
+};

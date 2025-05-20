@@ -12,6 +12,7 @@ async function login(req, res, next) {
     const data = await auth.findOne({ where: { email: email } });
     const user = await user.findOne({ where: { email: email } });
     const resp = await validatePassword(password, data.password, data, user);
+    response.success(req, res, resp, 200);
   } catch (error) {
     next(error);
   }
@@ -31,3 +32,23 @@ const validatePassword = async (pass1, pass2, data, user) => {
     }
   });
 };
+
+const create = async (req, res, next) => {
+    try {
+        const data= req.body;
+        await Auth.sync();
+        password= await bycrypt.hash(data.password.ToString(), 10);
+        createAuth= await Auth.create({
+            id: data.id,
+            email: data.email,
+            password: password,
+        });
+        message={
+            msg: "User created successfully",
+            regID: create.id,
+        };
+        response.success(req, res, message, 201);
+    } catch (error) {
+        next(error);
+    }
+}

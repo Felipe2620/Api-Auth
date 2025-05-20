@@ -90,3 +90,34 @@ const deleted = async(req,res,next)=>{
         next(error)
     }
 }
+const uploadAvatar = async(req,res,next)=>{
+    const { file } = req
+    let filePath = file.path;
+    let imagePath = `http://localhost:3000/images/users/${file.filename}`;
+    let data = {
+        avatar: imagePath,
+        imagePath: filePath
+    };
+    try {
+        const id = req.params.id;
+        const user = await User.findOne({where: {id}});
+        if (user.imagePath != null) {
+            fs.unlink(user.imagePath,(err)=>{
+                if (err) {
+                    console.log(err);
+                    return
+                }
+            });
+        }
+        const updated = await User.update(data,{ where:{id}});
+        message = {
+            msg: "Image was modified successfully",
+            user: req.body.id,
+            img: imagePath
+        };
+        response.success(req,res,message)
+    } 
+    catch (error) {
+        next(error)
+    }
+}

@@ -121,3 +121,11 @@ const uploadAvatar = async(req,res,next)=>{
         next(error)
     }
 }
+ module.exports = {
+    getAll,
+    getOne,
+    create,
+    update,
+    deleted,
+    uploadAvatar,
+}
